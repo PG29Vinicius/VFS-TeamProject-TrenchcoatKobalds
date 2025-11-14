@@ -5,8 +5,6 @@ Mouse            = Look around
 Space            = Jump (press twice to double jump!)
 F                = Kick (strong, long reach)
 G                = Punch (fast, short reach)
-*(Now only have movement)
-
 
 In the Future: 
 - Run and jump around the map
