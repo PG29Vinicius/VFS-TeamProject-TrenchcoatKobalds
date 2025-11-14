@@ -6,8 +6,9 @@ public class GrapplingGun : MonoBehaviour {
     private Vector3 grapplePoint;
     public LayerMask whatIsGrappleable;
     public Transform gunTip, camera, player;
-    private float maxDistance = 100f;
+    [SerializeField] private float maxDistance = 100f;
     private SpringJoint joint;
+    [SerializeField] private float hookSpring = 4.5f;
 
     void Awake() {
         lr = GetComponent<LineRenderer>();
@@ -27,9 +28,7 @@ public class GrapplingGun : MonoBehaviour {
         DrawRope();
     }
 
-    /// <summary>
-    /// Call whenever we want to start a grapple
-    /// </summary>
+
     //void StartGrapple() {
     //    RaycastHit hit;
     //    if (Physics.Raycast(camera.position, camera.forward, out hit, maxDistance, whatIsGrappleable)) {
@@ -54,6 +53,9 @@ public class GrapplingGun : MonoBehaviour {
     //    }
     //}
 
+    /// <summary>
+    /// Call whenever we want to start a grapple
+    /// </summary>
     void StartGrapple()
     {
         RaycastHit hit;
@@ -77,9 +79,9 @@ public class GrapplingGun : MonoBehaviour {
             joint.connectedAnchor = grapplePoint;
 
             float distanceFromPoint = Vector3.Distance(player.position, grapplePoint);
-            joint.maxDistance = distanceFromPoint * 0.8f;
+            joint.maxDistance = distanceFromPoint * 0.4f;
             joint.minDistance = distanceFromPoint * 0.25f;
-            joint.spring = 4.5f;
+            joint.spring = hookSpring;
             joint.damper = 7f;
             joint.massScale = 4.5f;
 
