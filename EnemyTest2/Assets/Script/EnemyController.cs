@@ -10,7 +10,9 @@ public class EnemyController : MonoBehaviour
 
     void Start()
     {
-        player = GameObject.Find("Capsule").transform;
+        // Try to find player
+        GameObject playerObj = GameObject.Find("Player");
+
     }
 
     void Update()
