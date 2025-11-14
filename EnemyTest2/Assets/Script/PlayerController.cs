@@ -1,6 +1,7 @@
 using System;
 using Unity.Mathematics;
 using UnityEngine;
+using TMPro; 
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,6 +10,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _mouseSensitivity = 400f;
 
     [SerializeField] private Camera _playerCamera; // reference
+
+    [Header("Health")]
+    [SerializeField] private int _health = 100;
+    [SerializeField] private TextMeshProUGUI _healthText;
 
     [Header("Jump")]
     [SerializeField] private float _jumpForce = 8f;    // Jump strength
@@ -21,6 +26,7 @@ public class PlayerController : MonoBehaviour
     private bool _isInitialized = false; // flag
     private int _jumpsRemaining;   // Current jumps left
     private bool _wasGrounded = false;  // Track if was on ground last frame
+    private bool _isDead = false;
 
     private void Start()
     {
@@ -41,6 +47,8 @@ public class PlayerController : MonoBehaviour
 
         // Mark as initialized after one frame
         Invoke(nameof(FinishInitialization), 0.1f);
+
+        UpdateHealthUI();
     }
 
     private void FinishInitialization()
@@ -105,4 +113,37 @@ public class PlayerController : MonoBehaviour
 
         _wasGrounded = isGrounded;
     }
+
+
+    // Take damage from enemies
+    public void TakeDamage(int damage)
+    {
+        if (_isDead) return;
+
+        _health -= damage;
+        Debug.Log("Health: " + _health);
+
+        if (_health <= 0)
+        {
+            Die();
+        }
+    }
+
+    // Update health text on screen
+    void UpdateHealthUI()
+    {
+        if (_healthText != null)
+        {
+            _healthText.text = "Hp: " + _health;
+        }
+    }
+
+    // Player dies
+    void Die()
+    {
+        _isDead = true;
+        _rb.linearVelocity = Vector3.zero;
+        Debug.Log("You died!");
+    }
+
 }

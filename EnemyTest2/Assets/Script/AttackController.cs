@@ -9,11 +9,14 @@ public class AttackController : MonoBehaviour
     [Header("Attack Settings")]
     [SerializeField] private float _kickDuration = 0.2f;
     [SerializeField] private float _punchDuration = 0.15f;
-    [SerializeField] private float _kickForce = 80f;
-    [SerializeField] private float _punchForce = 50f;
 
+    [Header("Knockback Forces")]
+    [SerializeField] private float _kickForce = 600f;
+    [SerializeField] private float _punchForce = 300f;
+    [SerializeField] private float _upForce = 200f;
 
     private bool _canAttack = true;
+    private string _currentAttack = "";
 
     void Start()
     {
@@ -32,22 +35,20 @@ public class AttackController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F))
         {
             Kick();
-            Debug.Log("Kick!!");
         }
 
         // Left Click = Punch
-        if (Input.GetKeyDown(KeyCode.G))
+        if (Input.GetMouseButtonDown(0))
         {
             Punch();
-            Debug.Log("Punch!!");
         }
     }
 
-    // Kick attack
     void Kick()
     {
         if (_kickHitbox == null) return;
 
+        _currentAttack = "Kick";
         _canAttack = false;
         _kickHitbox.SetActive(true);
         Invoke(nameof(EndKick), _kickDuration);
@@ -56,14 +57,15 @@ public class AttackController : MonoBehaviour
     void EndKick()
     {
         if (_kickHitbox != null) _kickHitbox.SetActive(false);
+        _currentAttack = "";
         _canAttack = true;
     }
 
-    // Punch attack
     void Punch()
     {
         if (_punchHitbox == null) return;
 
+        _currentAttack = "Punch";
         _canAttack = false;
         _punchHitbox.SetActive(true);
         Invoke(nameof(EndPunch), _punchDuration);
@@ -72,11 +74,27 @@ public class AttackController : MonoBehaviour
     void EndPunch()
     {
         if (_punchHitbox != null) _punchHitbox.SetActive(false);
+        _currentAttack = "";
         _canAttack = true;
     }
 
+    // Apply knockback to enemy (called by HitDetector on hitbox)
+    public void ApplyKnockback(GameObject enemy, Vector3 hitPosition)
+    {
+        Rigidbody enemyRb = enemy.GetComponent<Rigidbody>();
+        EnemyController enemyController = enemy.GetComponent<EnemyController>();
 
-    public float GetKickForce() {  return _kickForce; }
-    public float GetPunchForce() {  return _punchForce; }
+        if (enemyRb == null || enemyController == null) return;
 
+        // Damage enemy
+        enemyController.TakeDamage(1);
+
+        // Calculate knockback
+        float force = _currentAttack == "Kick" ? _kickForce : _punchForce;
+        Vector3 direction = (enemy.transform.position - hitPosition).normalized;
+
+        // Apply force
+        enemyRb.AddForce(direction * force);
+        enemyRb.AddForce(Vector3.up * _upForce);
+    }
 }

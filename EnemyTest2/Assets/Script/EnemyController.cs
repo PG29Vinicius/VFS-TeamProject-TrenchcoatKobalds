@@ -1,4 +1,5 @@
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class EnemyController : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class EnemyController : MonoBehaviour
     {
         // Try to find player
         GameObject playerObj = GameObject.Find("Player");
+        if (playerObj != null)
+        {
+            player = playerObj.transform;
+        }
 
     }
 
