@@ -14,9 +14,15 @@ public class AttackController : MonoBehaviour
     [SerializeField] private float _kickForce = 600f;
     [SerializeField] private float _punchForce = 300f;
     [SerializeField] private float _upForce = 200f;
+    [SerializeField] private float _speedMultiplier = 1.0f; //How much speed affects knockback
+
+    [Header("Damage")]
+    [SerializeField] private int _baseDamage = 1;
+    [SerializeField] private int _maxBonusDamage = 4;
 
     private bool _canAttack = true;
     private string _currentAttack = "";
+    private Rigidbody _playerRb;
 
     void Start()
     {
@@ -38,7 +44,7 @@ public class AttackController : MonoBehaviour
             Debug.Log("Kick!!");
         }
 
-        // Left Click = Punch
+        // G = Punch
         if (Input.GetKeyDown(KeyCode.G))
         {
             Punch();
