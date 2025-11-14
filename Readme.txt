@@ -1,10 +1,10 @@
-This one just for enemy and player behaviors without grappling
+This one is just for enemy and player behaviors without grappling
 
 WASD             = Walk around
 Mouse            = Look around
 Space            = Jump (press twice to double jump!)
 F                = Kick (strong, long reach)
-G       = Punch (fast, short reach)
+G                = Punch (fast, short reach)
 
 
 
