@@ -35,12 +35,14 @@ public class AttackController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F))
         {
             Kick();
+            Debug.Log("Kick!!");
         }
 
         // Left Click = Punch
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.G))
         {
             Punch();
+            Debug.Log("Punch!!");
         }
     }
 
