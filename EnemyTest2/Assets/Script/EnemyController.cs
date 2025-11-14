@@ -2,15 +2,40 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [Header("Stats")]
+    public int health = 3;
+    public float speed = 3f;
+
+    private Transform player;
+
     void Start()
     {
-        
+        player = GameObject.Find("Capsule").transform;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        ChasePlayer();
+    }
+
+    // Follow the player
+    void ChasePlayer()
+    {
+        Vector3 direction = (player.position - transform.position).normalized;
+        direction.y = 0;
+
+        transform.position += direction * speed * Time.deltaTime;
+        transform.LookAt(new Vector3(player.position.x, transform.position.y, player.position.z));
+    }
+
+    // Take damage
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+
+        if (health <= 0)
+        {
+            Destroy(gameObject);
+        }
     }
 }
