@@ -19,9 +19,9 @@ public class GrapplingGun : MonoBehaviour {
 
     void Update() 
     {
-        if (Input.GetMouseButtonDown(0) /*&& !isGrappling*/) 
+        if (Input.GetMouseButtonDown(0) && !isGrappling) 
             StartGrapple();
-        else if (Input.GetMouseButtonUp(0) /*&& isGrappling*/)
+        else if (Input.GetMouseButtonUp(0) && isGrappling)
             StopGrapple();
     }
 
@@ -99,6 +99,9 @@ public class GrapplingGun : MonoBehaviour {
     /// </summary>
     void StopGrapple() 
     {
+        if (joint == null) 
+            return;
+
         lr.positionCount = 0;
         Destroy(joint);
     }
@@ -108,7 +111,8 @@ public class GrapplingGun : MonoBehaviour {
     void DrawRope() 
     {
         //If not grappling, don't draw rope
-        if (!joint) return;
+        if (joint == null) 
+            return;
 
         currentGrapplePosition = Vector3.Lerp(currentGrapplePosition, grapplePoint, Time.deltaTime * 8f);
         
