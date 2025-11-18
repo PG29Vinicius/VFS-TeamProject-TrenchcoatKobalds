@@ -1,7 +1,7 @@
 using System;
 using Unity.Mathematics;
 using UnityEngine;
-using TMPro; 
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,45 +9,42 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int _speed = 10;
     [SerializeField] private float _mouseSensitivity = 400f;
 
-    [SerializeField] private Camera _playerCamera; // reference
+    [Header("Slide")]
+    [SerializeField] private float _slideSpeed = 15f;
+    [SerializeField] private float _slideDuration = 0.5f;
 
     [Header("Health")]
     [SerializeField] private int _health = 100;
     [SerializeField] private TextMeshProUGUI _healthText;
 
     [Header("Jump")]
-    [SerializeField] private float _jumpForce = 8f;    // Jump strength
-    [SerializeField] private int _maxJumps = 2;          // Total jumps allowed
-
+    [SerializeField] private float _jumpForce = 8f;
+    [SerializeField] private int _maxJumps = 2;
 
     private Rigidbody _rb;
+    private Camera _cam;
     private Vector3 _moveVector;
     private float _xRotation = 0f;
-    private bool _isInitialized = false; // flag
-    private int _jumpsRemaining;   // Current jumps left
-    private bool _wasGrounded = false;  // Track if was on ground last frame
+    private bool _isInitialized = false;
+    private int _jumpsRemaining;
+    private bool _wasGrounded = false;
     private bool _isDead = false;
+
+    private bool _isSliding = false;
+    private float _slideTimer = 0f;
+    private Vector3 _slideDirection;
 
     private void Start()
     {
         _rb = gameObject.GetComponent<Rigidbody>();
+        _cam = GetComponentInChildren<Camera>();
         _moveVector = Vector3.zero;
 
-        // Get camera reference if not assigned
-        if (_playerCamera == null)
-        {
-            _playerCamera = Camera.main;
-        }
-
-        // Force reset rotation
         _xRotation = 0f;
-        _playerCamera.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-
+        _cam.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
         Cursor.lockState = CursorLockMode.Locked;
 
-        // Mark as initialized after one frame
         Invoke(nameof(FinishInitialization), 0.1f);
-
         UpdateHealthUI();
     }
 
@@ -58,7 +55,6 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        // Skip mouse input for the first few frames
         if (_isInitialized)
         {
             float mouseX = Input.GetAxis("Mouse X") * _mouseSensitivity * Time.deltaTime;
@@ -67,45 +63,61 @@ public class PlayerController : MonoBehaviour
             _xRotation -= mouseY;
             _xRotation = Mathf.Clamp(_xRotation, -90f, 90f);
 
-            _playerCamera.transform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
+            _cam.transform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
             gameObject.transform.Rotate(Vector3.up * mouseX);
         }
 
         float zMovement = Input.GetAxis("Vertical");
         float xMovement = Input.GetAxis("Horizontal");
-
         _moveVector = transform.right * xMovement + transform.forward * zMovement;
 
-        // Jump input
+        // Slide input - Left Shift
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !_isSliding)
+        {
+            StartSlide();
+        }
+
+        // Update slide timer
+        if (_isSliding)
+        {
+            _slideTimer -= Time.deltaTime;
+            if (_slideTimer <= 0)
+            {
+                _isSliding = false;
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.Space) && _jumpsRemaining > 0)
         {
             Jump();
         }
 
-        // Reset jumps on ground
         CheckGround();
-
     }
 
     private void FixedUpdate()
     {
-        _rb.AddForce(_moveVector * _speed);
+        if (_isSliding)
+        {
+            _rb.linearVelocity = new Vector3(_slideDirection.x * _slideSpeed, _rb.linearVelocity.y, _slideDirection.z * _slideSpeed);
+        }
+        else
+        {
+            _rb.AddForce(_moveVector * _speed);
+        }
     }
 
-    // Perform jump
     private void Jump()
     {
-        _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);  // Reset Y velocity
-        _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);                          // Apply jump force
-        _jumpsRemaining--;                                                                 // Use one jump
+        _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
+        _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+        _jumpsRemaining--;
     }
 
-    // Check if touching ground
     private void CheckGround()
     {
         bool isGrounded = Physics.Raycast(transform.position, Vector3.down, 1.1f);
 
-        // Only reset jumps when LANDING (wasn't grounded before, now is)
         if (isGrounded && !_wasGrounded)
         {
             _jumpsRemaining = _maxJumps;
@@ -114,8 +126,22 @@ public class PlayerController : MonoBehaviour
         _wasGrounded = isGrounded;
     }
 
+    // Start slide
+    private void StartSlide()
+    {
+        _isSliding = true;
+        _slideTimer = _slideDuration;
 
-    // Take damage from enemies
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
+        _slideDirection = (transform.right * x + transform.forward * z).normalized;
+
+        if (_slideDirection == Vector3.zero)
+        {
+            _slideDirection = transform.forward;
+        }
+    }
+
     public void TakeDamage(int damage)
     {
         if (_isDead) return;
@@ -129,7 +155,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // Update health text on screen
     void UpdateHealthUI()
     {
         if (_healthText != null)
@@ -138,12 +163,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // Player dies
     void Die()
     {
         _isDead = true;
         _rb.linearVelocity = Vector3.zero;
         Debug.Log("You died!");
     }
-
 }
