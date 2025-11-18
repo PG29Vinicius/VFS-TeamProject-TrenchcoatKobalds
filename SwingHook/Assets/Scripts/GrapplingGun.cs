@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class GrapplingGun : MonoBehaviour {
 
+    private bool isGrappling = false;
+    [SerializeField] private float playerMass = 100f;
     private LineRenderer lr;
     private Vector3 grapplePoint;
     public LayerMask whatIsGrappleable;
@@ -10,21 +12,22 @@ public class GrapplingGun : MonoBehaviour {
     private SpringJoint joint;
     [SerializeField] private float hookSpring = 4.5f;
 
-    void Awake() {
+    void Awake() 
+    {
         lr = GetComponent<LineRenderer>();
     }
 
-    void Update() {
-        if (Input.GetMouseButtonDown(0)) {
+    void Update() 
+    {
+        if (Input.GetMouseButtonDown(0) /*&& !isGrappling*/) 
             StartGrapple();
-        }
-        else if (Input.GetMouseButtonUp(0)) {
+        else if (Input.GetMouseButtonUp(0) /*&& isGrappling*/)
             StopGrapple();
-        }
     }
 
     //Called after Update
-    void LateUpdate() {
+    void LateUpdate() 
+    {
         DrawRope();
     }
 
@@ -83,7 +86,7 @@ public class GrapplingGun : MonoBehaviour {
             joint.minDistance = distanceFromPoint * 0.25f;
             joint.spring = hookSpring;
             joint.damper = 7f;
-            joint.massScale = 4.5f;
+            joint.massScale = playerMass;
 
             lr.positionCount = 2;
             currentGrapplePosition = gunTip.position;
@@ -94,14 +97,16 @@ public class GrapplingGun : MonoBehaviour {
     /// <summary>
     /// Call whenever we want to stop a grapple
     /// </summary>
-    void StopGrapple() {
+    void StopGrapple() 
+    {
         lr.positionCount = 0;
         Destroy(joint);
     }
 
     private Vector3 currentGrapplePosition;
     
-    void DrawRope() {
+    void DrawRope() 
+    {
         //If not grappling, don't draw rope
         if (!joint) return;
 
@@ -111,11 +116,13 @@ public class GrapplingGun : MonoBehaviour {
         lr.SetPosition(1, currentGrapplePosition);
     }
 
-    public bool IsGrappling() {
+    public bool IsGrappling()
+    {
         return joint != null;
     }
 
-    public Vector3 GetGrapplePoint() {
+    public Vector3 GetGrapplePoint() 
+    {
         return grapplePoint;
     }
 }
