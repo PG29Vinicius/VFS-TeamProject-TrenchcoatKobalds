@@ -174,7 +174,7 @@ MonoBehaviour:
   maxHookshotDistance: 100
   useObjectCenter: 0
   hookshotKey: 324
-  pullSpeed: 20
+  pullSpeed: 50
   acceleration: 50
   stopDistance: 2
   maintainMomentum: 0

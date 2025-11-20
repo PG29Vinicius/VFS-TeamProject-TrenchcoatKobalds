@@ -28,6 +28,8 @@ public class Hookshot : MonoBehaviour
     private Vector3 currentRopePosition;
     private bool isHookshotting;
     private Vector3 pullDirection;
+    private Rigidbody targetRigidbody;
+    private Collider targetCollider;
 
     private void Awake()
     {
@@ -43,6 +45,7 @@ public class Hookshot : MonoBehaviour
     {
         if (isHookshotting == true)
         {
+            UpdateHookshotTarget();
             PullPlayerToTarget();
         }
     }
@@ -76,7 +79,10 @@ public class Hookshot : MonoBehaviour
 
         isHookshotting = true;
 
-        Vector3 targetPoint = CalculateHookshotPoint(hit);
+        targetCollider = hit.collider;
+        targetRigidbody = hit.rigidbody;
+
+        Vector3 targetPoint = CalculateHookshotPoint(hit.collider);
 
         hookshotPoint = targetPoint;
         pullDirection = (hookshotPoint - playerRigidbody.position).normalized;
@@ -89,14 +95,22 @@ public class Hookshot : MonoBehaviour
         InitializeRopeVisual();
     }
 
-    private Vector3 CalculateHookshotPoint(RaycastHit hit)
+    private void UpdateHookshotTarget()
     {
-        if (useObjectCenter && hit.collider != null)
+        if (targetCollider != null)
         {
-            return hit.collider.bounds.center;
+            hookshotPoint = CalculateHookshotPoint(targetCollider);
+        }
+    }
+
+    private Vector3 CalculateHookshotPoint(Collider collider)
+    {
+        if (useObjectCenter && collider != null)
+        {
+            return collider.bounds.center;
         }
 
-        return hit.point;
+        return collider.ClosestPoint(playerRigidbody.position);
     }
 
     private void PullPlayerToTarget()
@@ -125,6 +139,8 @@ public class Hookshot : MonoBehaviour
     private void StopHookshot()
     {
         isHookshotting = false;
+        targetCollider = null;
+        targetRigidbody = null;
         lineRenderer.positionCount = 0;
     }
 
