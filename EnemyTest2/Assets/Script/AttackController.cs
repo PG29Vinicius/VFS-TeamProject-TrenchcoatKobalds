@@ -7,6 +7,7 @@ public class AttackController : MonoBehaviour
 
     [Header("Attack Settings")]
     [SerializeField] private float _kickDuration = 0.2f;
+    [SerializeField] private int _kickDamage = 1;
 
     [Header("Knockback Forces")]
     [SerializeField] private float _kickForce = 600f;
@@ -50,12 +51,21 @@ public class AttackController : MonoBehaviour
         _canAttack = true;
     }
 
-    // Apply knockback only (no damage)
+    // Apply knockback and damage
     public void ApplyKnockback(GameObject enemy, Vector3 hitPosition)
     {
         Rigidbody enemyRb = enemy.GetComponent<Rigidbody>();
 
         if (enemyRb == null) return;
+
+        // Apply damage to enemy
+        MeleeEnemyController meleeEnemy = enemy.GetComponent<MeleeEnemyController>();
+        TankEnemyController tankEnemy = enemy.GetComponent<TankEnemyController>();
+        RangeEnemyController rangeEnemy = enemy.GetComponent<RangeEnemyController>();
+
+        if (meleeEnemy != null) meleeEnemy.TakeDamage(_kickDamage);
+        else if (tankEnemy != null) tankEnemy.TakeDamage(_kickDamage);
+        else if (rangeEnemy != null) rangeEnemy.TakeDamage(_kickDamage);
 
         // Calculate player speed
         float playerSpeed = _playerRb.linearVelocity.magnitude;
@@ -68,7 +78,5 @@ public class AttackController : MonoBehaviour
         // Apply force
         enemyRb.AddForce(direction * finalForce);
         enemyRb.AddForce(Vector3.up * _upForce * speedBonus);
-
-        Debug.Log("Speed: " + playerSpeed.ToString("F1") + " | Force: " + finalForce.ToString("F0"));
     }
 }
