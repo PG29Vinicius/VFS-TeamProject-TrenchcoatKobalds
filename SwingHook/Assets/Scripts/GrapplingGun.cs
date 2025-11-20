@@ -1,132 +1,216 @@
 using UnityEngine;
 
-public class GrapplingGun : MonoBehaviour {
+public class GrapplingGun : MonoBehaviour 
+{
+    [Header("References")]
+    [SerializeField] private Transform gunTip;
+    [SerializeField] private Transform cameraTransform;
+    [SerializeField] private Transform playerTransform;
+    [SerializeField] private LineRenderer lineRenderer;
 
-    private bool isGrappling = false;
+    [Header("Grapple Settings")]
+    [SerializeField] private LayerMask grappleableLayers;
+    [SerializeField] private float maxGrappleDistance = 100f;
+    [SerializeField] private bool useObjectCenter = true;
+
+    [Header("Physics Settings")]
     [SerializeField] private float playerMass = 100f;
-    private LineRenderer lr;
+    [SerializeField] private float springForce = 4.5f;
+    [SerializeField] private float damperForce = 7f;
+    [SerializeField] private float maxDistanceMultiplier = 0.4f;
+    [SerializeField] private float minDistanceMultiplier = 0.25f;
+
+    [Header("Visual Settings")]
+    [SerializeField] private float ropeDrawSpeed = 8f;
+
+    private SpringJoint activeJoint;
     private Vector3 grapplePoint;
-    public LayerMask whatIsGrappleable;
-    public Transform gunTip, camera, player;
-    [SerializeField] private float maxDistance = 100f;
-    private SpringJoint joint;
-    [SerializeField] private float hookSpring = 4.5f;
+    private Vector3 currentRopePosition;
+    private bool isGrappling;
 
-    void Awake() 
+    private void Awake()
     {
-        lr = GetComponent<LineRenderer>();
+        ValidateComponents();
     }
 
-    void Update() 
+    private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !isGrappling) 
-            StartGrapple();
-        else if (Input.GetMouseButtonUp(0) && isGrappling)
-            StopGrapple();
+        HandleInput();
     }
 
-    //Called after Update
-    void LateUpdate() 
+    private void LateUpdate()
     {
-        DrawRope();
+        UpdateRopeVisual();
     }
 
+    #region Input Handling
 
-    //void StartGrapple() {
-    //    RaycastHit hit;
-    //    if (Physics.Raycast(camera.position, camera.forward, out hit, maxDistance, whatIsGrappleable)) {
-    //        grapplePoint = hit.point;
-    //        joint = player.gameObject.AddComponent<SpringJoint>();
-    //        joint.autoConfigureConnectedAnchor = false;
-    //        joint.connectedAnchor = grapplePoint;
-
-    //        float distanceFromPoint = Vector3.Distance(player.position, grapplePoint);
-
-    //        //The distance grapple will try to keep from grapple point. 
-    //        joint.maxDistance = distanceFromPoint * 0.8f;
-    //        joint.minDistance = distanceFromPoint * 0.25f;
-
-    //        //Adjust these values to fit your game.
-    //        joint.spring = 4.5f;
-    //        joint.damper = 7f;
-    //        joint.massScale = 4.5f;
-
-    //        lr.positionCount = 2;
-    //        currentGrapplePosition = gunTip.position;
-    //    }
-    //}
-
-    /// <summary>
-    /// Call whenever we want to start a grapple
-    /// </summary>
-    void StartGrapple()
+    private void HandleInput()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(camera.position, camera.forward, out hit, maxDistance, whatIsGrappleable))
+        if (Input.GetMouseButtonDown(0) && isGrappling == false)
         {
-            // Get the center of the hit object
-            Vector3 objectCenter;
-            if (hit.collider.bounds != null)
-            {
-                objectCenter = hit.collider.bounds.center;
-            }
-            else
-            {
-                objectCenter = hit.transform.position;
-            }
-
-            grapplePoint = objectCenter; // Use object center instead of hit point
-
-            joint = player.gameObject.AddComponent<SpringJoint>();
-            joint.autoConfigureConnectedAnchor = false;
-            joint.connectedAnchor = grapplePoint;
-
-            float distanceFromPoint = Vector3.Distance(player.position, grapplePoint);
-            joint.maxDistance = distanceFromPoint * 0.4f;
-            joint.minDistance = distanceFromPoint * 0.25f;
-            joint.spring = hookSpring;
-            joint.damper = 7f;
-            joint.massScale = playerMass;
-
-            lr.positionCount = 2;
-            currentGrapplePosition = gunTip.position;
+            TryStartGrapple();
+        }
+        else if (Input.GetMouseButtonUp(0) && isGrappling == true)
+        {
+            StopGrapple();
         }
     }
 
+    #endregion
 
-    /// <summary>
-    /// Call whenever we want to stop a grapple
-    /// </summary>
-    void StopGrapple() 
+    #region Grapple Logic
+
+    private void TryStartGrapple()
     {
-        if (joint == null) 
+        RaycastHit hit;
+
+        if(Physics.Raycast(cameraTransform.position, cameraTransform.forward, 
+            out hit, maxGrappleDistance, grappleableLayers) == false)
+        {
             return;
+        }
 
-        lr.positionCount = 0;
-        Destroy(joint);
+        isGrappling = true;
+
+
+        Vector3 targetPoint = CalculateGrapplePoint(hit);
+        CreateGrappleJoint(targetPoint);
+        InitializeRopeVisual();
+
     }
 
-    private Vector3 currentGrapplePosition;
-    
-    void DrawRope() 
+    private Vector3 CalculateGrapplePoint(RaycastHit hit)
     {
-        //If not grappling, don't draw rope
-        if (joint == null) 
+        if (useObjectCenter && hit.collider != null)
+        {
+            return hit.collider.bounds.center;
+        }
+
+        return hit.point;
+    }
+
+    private void CreateGrappleJoint(Vector3 targetPoint)
+    {
+        grapplePoint = targetPoint;
+
+        activeJoint = playerTransform.gameObject.AddComponent<SpringJoint>();
+        activeJoint.autoConfigureConnectedAnchor = false;
+        activeJoint.connectedAnchor = grapplePoint;
+
+        float distance = Vector3.Distance(playerTransform.position, grapplePoint);
+        ConfigureJointPhysics(activeJoint, distance);
+    }
+
+    private void ConfigureJointPhysics(SpringJoint joint, float distance)
+    {
+        joint.maxDistance = distance * maxDistanceMultiplier;
+        joint.minDistance = distance * minDistanceMultiplier;
+        joint.spring = springForce;
+        joint.damper = damperForce;
+        joint.massScale = playerMass;
+    }
+
+    private void StopGrapple()
+    {
+        if (activeJoint != null)
+        {
+            Destroy(activeJoint);
+            activeJoint = null;
+        }
+
+        lineRenderer.positionCount = 0;
+        isGrappling = false;
+    }
+
+    #endregion
+
+    #region Rope Visual
+
+    private void InitializeRopeVisual()
+    {
+        lineRenderer.positionCount = 2;
+        currentRopePosition = gunTip.position;
+    }
+
+    private void UpdateRopeVisual()
+    {
+        if (isGrappling == false || activeJoint == null)
+        {
             return;
+        }
 
-        currentGrapplePosition = Vector3.Lerp(currentGrapplePosition, grapplePoint, Time.deltaTime * 8f);
-        
-        lr.SetPosition(0, gunTip.position);
-        lr.SetPosition(1, currentGrapplePosition);
+        currentRopePosition = Vector3.Lerp(currentRopePosition, grapplePoint, ropeDrawSpeed * Time.deltaTime);
+
+        lineRenderer.SetPosition(0, gunTip.position);
+        lineRenderer.SetPosition(1, currentRopePosition);
     }
 
-    public bool IsGrappling()
+    #endregion
+
+    #region Public Accesses
+
+    public bool IsGrappling() => isGrappling;
+
+    public Vector3 GetGrapplePoint() => grapplePoint;
+
+    public bool HasActiveJoint() => activeJoint != null;
+
+    #endregion
+
+    #region Validation
+
+    private void ValidateComponents()
     {
-        return joint != null;
+        if (lineRenderer == null)
+        {
+            lineRenderer = GetComponent<LineRenderer>();
+
+            if (lineRenderer == null)
+            {
+                Debug.LogError("GrapplingGun: LineRenderer component missing!");
+            }
+        }
+
+        if (gunTip == null)
+        {
+            Debug.LogError("GrapplingGun: Gun Tip transform not assigned!");
+        }
+
+        if (cameraTransform == null)
+        {
+            Debug.LogError("GrapplingGun: Camera transform not assigned!");
+        }
+
+        if (playerTransform == null)
+        {
+            Debug.LogError("GrapplingGun: Player transform not assigned!");
+        }
     }
 
-    public Vector3 GetGrapplePoint() 
+    #endregion
+
+    #region Debug
+
+    private void OnDrawGizmos()
     {
-        return grapplePoint;
+        if (isGrappling == false)
+        {
+            return;
+        }
+
+        float radius = 0.5f;
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(grapplePoint, radius);
+
+        if (playerTransform != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(playerTransform.position, grapplePoint);
+        }
     }
+
+    #endregion
+
 }
