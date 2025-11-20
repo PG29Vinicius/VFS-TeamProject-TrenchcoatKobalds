@@ -14,7 +14,6 @@ public class RangeEnemyController : MonoBehaviour
     
     void Start()
     {
-       
         GameObject playerObj = GameObject.Find("Player");
         if (playerObj != null)
         {
@@ -28,18 +27,15 @@ public class RangeEnemyController : MonoBehaviour
         {
             float distance = Vector3.Distance(transform.position, _player.position);
             
-            // Update attack timer
             if (_attackTimer > 0)
             {
                 _attackTimer -= Time.deltaTime;
             }
             
-            // Look at player if in range
             if (distance <= _attackDistance)
             {
                 transform.LookAt(new Vector3(_player.position.x, transform.position.y, _player.position.z));
                 
-                // Attack if ready
                 if (_attackTimer <= 0 && !_isAttacking)
                 {
                     Attack();
@@ -53,9 +49,8 @@ public class RangeEnemyController : MonoBehaviour
         _isAttacking = true;
         _attackTimer = _attackCooldown;
         
-        //Debug.Log("Range Enemy shoots!");
+        Debug.Log("Range Enemy shoots!");
         
-        // Deal damage (instant hit for now)
         PlayerController playerController = _player.GetComponent<PlayerController>();
         if (playerController != null)
         {
@@ -74,4 +69,12 @@ public class RangeEnemyController : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    void OnCollisionStay(Collision collision)
+{
+    if (collision.gameObject.name == "Player" && _attackTimer <= 0 && !_isAttacking)
+    {
+        Attack();
+    }
+}
 }

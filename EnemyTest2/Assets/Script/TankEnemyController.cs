@@ -30,13 +30,11 @@ public class TankEnemyController : MonoBehaviour
         {
             float distance = Vector3.Distance(transform.position, _player.position);
             
-            // Update attack timer
             if (_attackTimer > 0)
             {
                 _attackTimer -= Time.deltaTime;
             }
             
-            // Check if can attack
             if (distance <= _attackDistance && _attackTimer <= 0 && !_isAttacking)
             {
                 Attack();
@@ -46,7 +44,6 @@ public class TankEnemyController : MonoBehaviour
                 ChasePlayer();
             }
             
-            // Always look at player
             transform.LookAt(new Vector3(_player.position.x, transform.position.y, _player.position.z));
         }
     }
@@ -63,9 +60,8 @@ public class TankEnemyController : MonoBehaviour
         _isAttacking = true;
         _attackTimer = _attackCooldown;
         
-        //Debug.Log("Tank Enemy attacks!");
+        Debug.Log("Tank Enemy attacks!");
         
-        // Deal damage
         PlayerController playerController = _player.GetComponent<PlayerController>();
         if (playerController != null)
         {
@@ -84,4 +80,11 @@ public class TankEnemyController : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    void OnCollisionStay(Collision collision)
+{
+    if (collision.gameObject.name == "Player" && _attackTimer <= 0 && !_isAttacking)
+    {
+        Attack();
+    }
+}
 }
