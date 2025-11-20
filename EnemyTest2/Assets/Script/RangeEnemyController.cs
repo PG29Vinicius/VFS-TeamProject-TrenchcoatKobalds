@@ -14,8 +14,7 @@ public class RangeEnemyController : MonoBehaviour
     
     void Start()
     {
-        transform.localScale = new Vector3(0.25f, 1.6f, 0.25f);
-        
+       
         GameObject playerObj = GameObject.Find("Player");
         if (playerObj != null)
         {

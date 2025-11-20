@@ -21,13 +21,23 @@ public class AttackController : MonoBehaviour
     {
         _playerRb = GetComponentInParent<Rigidbody>();
 
-        if (_kickHitbox == null) _kickHitbox = GameObject.Find("KickHitbox");
-        if (_kickHitbox != null) _kickHitbox.SetActive(false);
+        if (_kickHitbox == null)
+        {
+            _kickHitbox = GameObject.Find("KickHitbox");
+        }
+
+        if (_kickHitbox != null)
+        {
+            _kickHitbox.SetActive(false);
+        }
     }
 
     void Update()
     {
-        if (!_canAttack) return;
+        if (!_canAttack)
+        {
+            return;
+    }
 
         // F = Kick
         if (Input.GetKeyDown(KeyCode.F))
@@ -38,7 +48,10 @@ public class AttackController : MonoBehaviour
 
     void Kick()
     {
-        if (_kickHitbox == null) return;
+        if (_kickHitbox == null)
+        {
+            return;
+        }
 
         _canAttack = false;
         _kickHitbox.SetActive(true);
@@ -47,7 +60,11 @@ public class AttackController : MonoBehaviour
 
     void EndKick()
     {
-        if (_kickHitbox != null) _kickHitbox.SetActive(false);
+        if (_kickHitbox != null)
+        {
+            _kickHitbox.SetActive(false);
+        }
+
         _canAttack = true;
     }
 
@@ -56,16 +73,28 @@ public class AttackController : MonoBehaviour
     {
         Rigidbody enemyRb = enemy.GetComponent<Rigidbody>();
 
-        if (enemyRb == null) return;
+        if (enemyRb == null)
+        {
+            return;
+        }
 
         // Apply damage to enemy
         MeleeEnemyController meleeEnemy = enemy.GetComponent<MeleeEnemyController>();
         TankEnemyController tankEnemy = enemy.GetComponent<TankEnemyController>();
         RangeEnemyController rangeEnemy = enemy.GetComponent<RangeEnemyController>();
 
-        if (meleeEnemy != null) meleeEnemy.TakeDamage(_kickDamage);
-        else if (tankEnemy != null) tankEnemy.TakeDamage(_kickDamage);
-        else if (rangeEnemy != null) rangeEnemy.TakeDamage(_kickDamage);
+        if (meleeEnemy != null)
+        { 
+            meleeEnemy.TakeDamage(_kickDamage);
+        }
+        else if (tankEnemy != null)
+        {
+            tankEnemy.TakeDamage(_kickDamage);
+        }
+        else if (rangeEnemy != null)
+        {
+            rangeEnemy.TakeDamage(_kickDamage);
+        }
 
         // Calculate player speed
         float playerSpeed = _playerRb.linearVelocity.magnitude;

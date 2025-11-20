@@ -15,7 +15,6 @@ public class TankEnemyController : MonoBehaviour
     
     void Start()
     {
-        transform.localScale = new Vector3(0.55f, 2.5f, 0.55f);
         GetComponent<Rigidbody>().mass = 5;
         
         GameObject playerObj = GameObject.Find("Player");

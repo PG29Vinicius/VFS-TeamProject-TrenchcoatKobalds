@@ -15,8 +15,7 @@ public class MeleeEnemyController : MonoBehaviour
     
     void Start()
     {
-        transform.localScale = new Vector3(0.3f, 1.8f, 0.3f);
-        
+      
         GameObject playerObj = GameObject.Find("Player");
         if (playerObj != null)
         {
