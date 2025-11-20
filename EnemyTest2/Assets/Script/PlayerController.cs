@@ -1,25 +1,24 @@
 using System;
 using Unity.Mathematics;
 using UnityEngine;
-using TMPro; 
+
 
 public class PlayerController : MonoBehaviour
 {
     [Header("Player")]
-    [SerializeField] private int _speed = 10;  // Based on spreadsheet
-    [SerializeField] private float _mouseSensitivity = 400f;
+    [SerializeField][Tooltip("The speed of player and based on spreadsheet")] private int _speed = 10; 
+    [SerializeField][Tooltip("How fast player control the camera")] private float _mouseSensitivity = 400f;
     
     [Header("Slide")]
-    [SerializeField] private float _slideSpeed = 15f;
-    [SerializeField] private float _slideDuration = 0.5f;
+    [SerializeField][Tooltip("The parameter of player slide speed")] private float _slideSpeed = 15f;
+    [SerializeField][Tooltip("The distance of player can slide")] private float _slideDuration = 0.5f;
     
     [Header("Health")]
-    [SerializeField] private int _health = 100;  // From spreadsheet: Player health = 100
-    [SerializeField] private TextMeshProUGUI _healthText;
+    [SerializeField][Tooltip("")] private int _health = 100;  
     
     [Header("Jump")]
-    [SerializeField] private float _jumpForce = 8f;
-    [SerializeField] private int _maxJumps = 2;
+    [SerializeField][Tooltip("")] private float _jumpForce = 8f;
+    [SerializeField][Tooltip("")] private int _maxJumps = 2;
     
     private Rigidbody _rb;
     private Camera _cam;
@@ -34,6 +33,9 @@ public class PlayerController : MonoBehaviour
     private float _slideTimer = 0f;
     private Vector3 _slideDirection;
     
+    /// <summary>
+    /// Initializes the player controller by setting up references, locking the cursor, and preparing movement variables.
+    /// </summary>
     private void Start()
     {
         _rb = gameObject.GetComponent<Rigidbody>();
@@ -45,16 +47,23 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         
         Invoke(nameof(FinishInitialization), 0.1f);
-        UpdateHealthUI();
+  
     }
     
+    /// <summary>
+    /// Marks the player controller as initialized, allowing for input processing.
+    /// </summary>
     private void FinishInitialization()
     {
         _isInitialized = true;
     }
     
+    /// <summary>
+    /// Handles player input for movement, camera control, jumping, and sliding.
+    /// </summary>
     private void Update()
     {
+        // Camera control
         if (_isInitialized)
         {
             float mouseX = Input.GetAxis("Mouse X") * _mouseSensitivity * Time.deltaTime;
@@ -87,6 +96,7 @@ public class PlayerController : MonoBehaviour
             }
         }
         
+        // Jump input - Space
         if (Input.GetKeyDown(KeyCode.Space) && _jumpsRemaining > 0)
         {
             Jump();
@@ -95,6 +105,9 @@ public class PlayerController : MonoBehaviour
         CheckGround();
     }
     
+    /// <summary>
+    /// Handles physics-based movement and sliding mechanics.
+    /// </summary>
     private void FixedUpdate()
     {
         if (_isSliding)
@@ -112,6 +125,9 @@ public class PlayerController : MonoBehaviour
         }
     }
     
+    /// <summary>
+    /// Handles the jump action, applying upward force and decrementing remaining jumps.
+    /// </summary>
     private void Jump()
     {
         _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, 0f, _rb.linearVelocity.z);
@@ -119,6 +135,9 @@ public class PlayerController : MonoBehaviour
         _jumpsRemaining--;
     }
     
+    /// <summary>
+    /// Checks if the player is grounded and resets jump count if so.
+    /// </summary>
     private void CheckGround()
     {
         bool isGrounded = Physics.Raycast(transform.position, Vector3.down, 1.1f);
@@ -130,7 +149,10 @@ public class PlayerController : MonoBehaviour
         
         _wasGrounded = isGrounded;
     }
-    
+
+    /// <summary>
+    /// Initiates the sliding action by setting the slide state, timer, and direction.
+    /// </summary>    
     private void StartSlide()
     {
         _isSliding = true;
@@ -146,12 +168,15 @@ public class PlayerController : MonoBehaviour
         }
     }
     
+    /// <summary>
+    /// Applies damage to the player and checks for death condition.
+    /// </summary>
+    /// <param name="damage"></param>
     public void TakeDamage(int damage)
     {
         if (_isDead) return;
         
         _health -= damage;
-        UpdateHealthUI();
         Debug.Log("Health: " + _health);
         
         if (_health <= 0)
@@ -160,14 +185,10 @@ public class PlayerController : MonoBehaviour
         }
     }
     
-    void UpdateHealthUI()
-    {
-        if (_healthText != null)
-        {
-            _healthText.text = "Hp: " + _health;
-        }
-    }
-    
+   
+    /// <summary>
+    /// Handles player death by marking the player as dead and stopping movement.
+    /// </summary>
     void Die()
     {
         _isDead = true;
