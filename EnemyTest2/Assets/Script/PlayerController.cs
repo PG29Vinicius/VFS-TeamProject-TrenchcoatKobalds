@@ -33,9 +33,8 @@ public class PlayerController : MonoBehaviour
     private float _slideTimer = 0f;
     private Vector3 _slideDirection;
     
-    /// <summary>
-    /// Initializes the player controller by setting up references, locking the cursor, and preparing movement variables.
-    /// </summary>
+
+    // Initializes the player controller by setting up references, locking the cursor, and preparing movement variables.
     private void Start()
     {
         _rb = gameObject.GetComponent<Rigidbody>();
@@ -58,9 +57,8 @@ public class PlayerController : MonoBehaviour
         _isInitialized = true;
     }
     
-    /// <summary>
+
     /// Handles player input for movement, camera control, jumping, and sliding.
-    /// </summary>
     private void Update()
     {
         // Camera control
@@ -105,9 +103,8 @@ public class PlayerController : MonoBehaviour
         CheckGround();
     }
     
-    /// <summary>
-    /// Handles physics-based movement and sliding mechanics.
-    /// </summary>
+
+    // Handles physics-based movement and sliding mechanics.
     private void FixedUpdate()
     {
         if (_isSliding)

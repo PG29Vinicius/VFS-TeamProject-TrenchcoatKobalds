@@ -17,9 +17,8 @@ public class AttackController : MonoBehaviour
     private bool _canAttack = true;
     private Rigidbody _playerRb;
 
-    /// <summary>
+ 
     /// Initializes the AttackController by setting up references to the player's Rigidbody and the kick hitbox.
-    /// </summary>
     void Start()
     {
         _playerRb = GetComponentInParent<Rigidbody>();
@@ -35,9 +34,8 @@ public class AttackController : MonoBehaviour
         }
     }
 
-    /// <summary>
+
     /// Handles player input for attacks.
-    /// </summary>
     void Update()
     {
         if (!_canAttack)

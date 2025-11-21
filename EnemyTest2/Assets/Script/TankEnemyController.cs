@@ -12,9 +12,8 @@ public class TankEnemyController : MonoBehaviour
     private Transform _player;
     private bool _isAttacking = false;
 
-    /// <summary>
-    /// Initializes the tank enemy by setting its mass and finding the player reference.
-    /// </summary>
+
+    // Initializes the tank enemy by setting its mass and finding the player reference.
     void Start()
     {
         GetComponent<Rigidbody>().mass = 5;
@@ -26,9 +25,7 @@ public class TankEnemyController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Updates the tank enemy each frame, managing attack timer and deciding whether to chase or attack the player.
-    /// </summary>
+    // Updates the tank enemy each frame, managing attack timer and deciding whether to chase or attack the player.
     void Update()
     {
         if (_player != null)

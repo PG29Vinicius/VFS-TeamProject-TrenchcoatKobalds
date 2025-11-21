@@ -12,9 +12,7 @@ public class RangeEnemyController : MonoBehaviour
     private float _attackTimer = 0f;
     private bool _isAttacking = false;
 
-    /// <summary>
-    /// Initializes the range enemy by finding and storing a reference to the player.
-    /// </summary>
+    //Initializes the range enemy by finding and storing a reference to the player.
     void Start()
     {
         GameObject playerObj = GameObject.Find("Player");
@@ -24,9 +22,7 @@ public class RangeEnemyController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Updates the range enemy each frame, checking distance to player and attacking when in range.
-    /// </summary>
+    // Updates the range enemy each frame, checking distance to player and attacking when in range.
     void Update()
     {
         if (_player != null)

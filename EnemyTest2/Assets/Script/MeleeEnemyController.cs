@@ -13,9 +13,8 @@ public class MeleeEnemyController : MonoBehaviour
     private float _attackTimer = 0f;
     private bool _isAttacking = false;
 
-    /// <summary>
-    /// Initializes the melee enemy by finding and storing a reference to the player.
-    /// </summary>
+
+    // Initializes the melee enemy by finding and storing a reference to the player.
     void Start()
     {
         GameObject playerObj = GameObject.Find("Player");
@@ -25,9 +24,8 @@ public class MeleeEnemyController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Updates the melee enemy each frame, managing attack timer and deciding whether to chase or attack the player.
-    /// </summary>
+
+    // Updates the melee enemy each frame, managing attack timer and deciding whether to chase or attack the player.
     void Update()
     {
         if (_player != null)
