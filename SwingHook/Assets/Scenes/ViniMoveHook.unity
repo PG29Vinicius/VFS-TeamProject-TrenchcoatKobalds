@@ -173,7 +173,7 @@ MonoBehaviour:
     m_Bits: 256
   maxHookshotDistance: 100
   useObjectCenter: 0
-  hookshotKey: 324
+  hookshotKey: 323
   pullSpeed: 50
   acceleration: 50
   stopDistance: 2
@@ -3499,7 +3499,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1099892705
 Transform:
   m_ObjectHideFlags: 0
@@ -5317,7 +5317,7 @@ MonoBehaviour:
     m_Bits: 256
   maxGrappleDistance: 100
   useObjectCenter: 1
-  grappleKey: 323
+  grappleKey: 324
   playerMass: 100
   springForce: 4.5
   damperForce: 7
@@ -6685,7 +6685,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1968591034
 Transform:
   m_ObjectHideFlags: 0
