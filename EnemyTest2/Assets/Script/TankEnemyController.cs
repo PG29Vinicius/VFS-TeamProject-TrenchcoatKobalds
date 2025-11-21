@@ -3,16 +3,18 @@ using UnityEngine;
 public class TankEnemyController : MonoBehaviour
 {
     [Header("Tank Enemy Stats")]
-    [SerializeField] private int _health = 100;
-    [SerializeField] private float _speed = 2.5f;
-    [SerializeField] private int _damage = 15;
-    [SerializeField] private float _attackDistance = 0.8f;
-    [SerializeField] private float _attackCooldown = 1.5f;
-    
+    [SerializeField][Tooltip("The maximum health points of the tank enemy")] private int _health = 100;
+    [SerializeField][Tooltip("The movement speed of the tank enemy in units per second")] private float _speed = 2.5f;
+    [SerializeField][Tooltip("The amount of damage dealt to the player per attack")] private int _damage = 15;
+    [SerializeField][Tooltip("The distance at which the tank enemy can attack the player")] private float _attackDistance = 0.8f;
+    [SerializeField][Tooltip("Time in seconds between consecutive attacks")] private float _attackCooldown = 1.5f;
+    [SerializeField][Tooltip("Internal timer tracking time until next attack is available")] private float _attackTimer = 0f;
     private Transform _player;
-    private float _attackTimer = 0f;
     private bool _isAttacking = false;
-    
+
+    /// <summary>
+    /// Initializes the tank enemy by setting its mass and finding the player reference.
+    /// </summary>
     void Start()
     {
         GetComponent<Rigidbody>().mass = 5;
@@ -23,7 +25,10 @@ public class TankEnemyController : MonoBehaviour
             _player = playerObj.transform;
         }
     }
-    
+
+    /// <summary>
+    /// Updates the tank enemy each frame, managing attack timer and deciding whether to chase or attack the player.
+    /// </summary>
     void Update()
     {
         if (_player != null)
@@ -48,13 +53,19 @@ public class TankEnemyController : MonoBehaviour
         }
     }
     
+    /// <summary>
+    /// Chases the player by moving towards their position.
+    /// </summary>
     void ChasePlayer()
     {
         Vector3 direction = (_player.position - transform.position).normalized;
         direction.y = 0;
         transform.position += direction * _speed * Time.deltaTime;
     }
-    
+
+    /// <summary>
+    /// Attacks the player, dealing damage and resetting the attack timer.
+    /// </summary>
     void Attack()
     {
         _isAttacking = true;
@@ -71,6 +82,10 @@ public class TankEnemyController : MonoBehaviour
         _isAttacking = false;
     }
     
+    /// <summary>
+    /// Reduces the tank enemy's health by the specified damage amount.
+    /// </summary>
+    /// <param name="damage"></param>
     public void TakeDamage(int damage)
     {
         _health -= damage;
@@ -80,11 +95,16 @@ public class TankEnemyController : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    /// <summary>
+    /// Handles collision stay events to trigger attacks on the player.
+    /// </summary>
+    /// <param name="collision"></param>
     void OnCollisionStay(Collision collision)
-{
-    if (collision.gameObject.name == "Player" && _attackTimer <= 0 && !_isAttacking)
     {
-        Attack();
+        if (collision.gameObject.name == "Player" && _attackTimer <= 0 && !_isAttacking)
+        {
+            Attack();
+        }
     }
-}
 }

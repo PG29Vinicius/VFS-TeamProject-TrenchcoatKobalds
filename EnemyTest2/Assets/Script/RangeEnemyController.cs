@@ -3,15 +3,18 @@ using UnityEngine;
 public class RangeEnemyController : MonoBehaviour
 {
     [Header("Range Enemy Stats")]
-    [SerializeField] private int _health = 3;
-    [SerializeField] private int _damage = 20;
-    [SerializeField] private float _attackDistance = 20f;
-    [SerializeField] private float _attackCooldown = 2f;
+    [SerializeField][Tooltip("The maximum health points of the range enemy")] private int _health = 3;
+    [SerializeField][Tooltip("The amount of damage dealt to the player per attack")] private int _damage = 20;
+    [SerializeField][Tooltip("The maximum distance from which the range enemy can attack the player")] private float _attackDistance = 20f;
+    [SerializeField][Tooltip("Time in seconds between consecutive attacks")] private float _attackCooldown = 2f;
     
     private Transform _player;
     private float _attackTimer = 0f;
     private bool _isAttacking = false;
-    
+
+    /// <summary>
+    /// Initializes the range enemy by finding and storing a reference to the player.
+    /// </summary>
     void Start()
     {
         GameObject playerObj = GameObject.Find("Player");
@@ -20,7 +23,10 @@ public class RangeEnemyController : MonoBehaviour
             _player = playerObj.transform;
         }
     }
-    
+
+    /// <summary>
+    /// Updates the range enemy each frame, checking distance to player and attacking when in range.
+    /// </summary>
     void Update()
     {
         if (_player != null)
@@ -44,6 +50,9 @@ public class RangeEnemyController : MonoBehaviour
         }
     }
     
+    /// <summary>
+    /// Attacks the player, dealing damage and resetting the attack timer.
+    /// </summary>
     void Attack()
     {
         _isAttacking = true;
@@ -60,6 +69,10 @@ public class RangeEnemyController : MonoBehaviour
         _isAttacking = false;
     }
     
+    /// <summary>
+    /// Reduces the range enemy's health by the specified damage amount and destroys it if health reaches zero.
+    /// </summary>
+    /// <param name="damage">The amount of damage to apply.</param>
     public void TakeDamage(int damage)
     {
         _health -= damage;
@@ -70,6 +83,10 @@ public class RangeEnemyController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles collision stay events to trigger attacks on the player.
+    /// </summary>
+    /// <param name="collision">The collision information.</param>
     void OnCollisionStay(Collision collision)
 {
     if (collision.gameObject.name == "Player" && _attackTimer <= 0 && !_isAttacking)

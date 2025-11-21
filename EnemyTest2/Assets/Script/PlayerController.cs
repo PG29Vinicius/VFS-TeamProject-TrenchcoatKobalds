@@ -14,11 +14,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField][Tooltip("The distance of player can slide")] private float _slideDuration = 0.5f;
     
     [Header("Health")]
-    [SerializeField][Tooltip("")] private int _health = 100;  
-    
+    [SerializeField][Tooltip("The maximum health points of the player")] private int _health = 100;
+
     [Header("Jump")]
-    [SerializeField][Tooltip("")] private float _jumpForce = 8f;
-    [SerializeField][Tooltip("")] private int _maxJumps = 2;
+    [SerializeField][Tooltip("The amount of upward force applied when jumping")] private float _jumpForce = 8f;
+    [SerializeField][Tooltip("The maximum number of consecutive jumps the player can perform")] private int _maxJumps = 2;
     
     private Rigidbody _rb;
     private Camera _cam;

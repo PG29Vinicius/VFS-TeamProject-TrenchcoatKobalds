@@ -3,20 +3,23 @@ using UnityEngine;
 public class AttackController : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private GameObject _kickHitbox;
+    [SerializeField][Tooltip("The hitbox GameObject that detects kick collision with enemies")] private GameObject _kickHitbox;
 
     [Header("Attack Settings")]
-    [SerializeField] private float _kickDuration = 0.2f;
-    [SerializeField] private int _kickDamage = 1;
+    [SerializeField][Tooltip("How long the kick hitbox stays active in seconds")] private float _kickDuration = 0.2f;
+    [SerializeField][Tooltip("The amount of damage dealt by a kick attack")] private int _kickDamage = 1;
 
     [Header("Knockback Forces")]
-    [SerializeField] private float _kickForce = 600f;
-    [SerializeField] private float _upForce = 200f;
-    [SerializeField] private float _speedMultiplier = 1.0f;
+    [SerializeField][Tooltip("The horizontal force applied to enemies when kicked")] private float _kickForce = 600f;
+    [SerializeField][Tooltip("The upward force applied to enemies when kicked")] private float _upForce = 200f;
+    [SerializeField][Tooltip("Multiplier for knockback based on player movement speed")] private float _speedMultiplier = 1.0f;
 
     private bool _canAttack = true;
     private Rigidbody _playerRb;
 
+    /// <summary>
+    /// Initializes the AttackController by setting up references to the player's Rigidbody and the kick hitbox.
+    /// </summary>
     void Start()
     {
         _playerRb = GetComponentInParent<Rigidbody>();
@@ -32,6 +35,9 @@ public class AttackController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles player input for attacks.
+    /// </summary>
     void Update()
     {
         if (!_canAttack)
@@ -46,6 +52,9 @@ public class AttackController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Initiates the kick attack by activating the hitbox and setting a timer to end the attack.
+    /// </summary>
     void Kick()
     {
         if (_kickHitbox == null)
@@ -58,6 +67,9 @@ public class AttackController : MonoBehaviour
         Invoke(nameof(EndKick), _kickDuration);
     }
 
+    /// <summary>
+    /// Ends the kick attack by deactivating the hitbox and allowing further attacks.
+    /// </summary>
     void EndKick()
     {
         if (_kickHitbox != null)
@@ -68,7 +80,11 @@ public class AttackController : MonoBehaviour
         _canAttack = true;
     }
 
-    // Apply knockback and damage
+    /// <summary>
+    /// Applies knockback to the specified enemy and deals damage.
+    /// </summary>
+    /// <param name="enemy"></param>
+    /// <param name="hitPosition"></param>
     public void ApplyKnockback(GameObject enemy, Vector3 hitPosition)
     {
         Rigidbody enemyRb = enemy.GetComponent<Rigidbody>();

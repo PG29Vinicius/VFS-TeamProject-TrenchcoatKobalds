@@ -3,16 +3,19 @@ using UnityEngine;
 public class MeleeEnemyController : MonoBehaviour
 {
     [Header("Melee Enemy Stats")]
-    [SerializeField] private int _health = 5;
-    [SerializeField] private float _speed = 5f;
-    [SerializeField] private int _damage = 20;
-    [SerializeField] private float _attackDistance = 0.5f;
-    [SerializeField] private float _attackCooldown = 1f;
+    [SerializeField][Tooltip("The maximum health points of the melee enemy")] private int _health = 5;
+    [SerializeField][Tooltip("The movement speed of the melee enemy in units per second")] private float _speed = 5f;
+    [SerializeField][Tooltip("The amount of damage dealt to the player per attack")] private int _damage = 20;
+    [SerializeField][Tooltip("The distance at which the melee enemy can attack the player")] private float _attackDistance = 0.5f;
+    [SerializeField][Tooltip("Time in seconds between consecutive attacks")] private float _attackCooldown = 1f;
     
     private Transform _player;
     private float _attackTimer = 0f;
     private bool _isAttacking = false;
-    
+
+    /// <summary>
+    /// Initializes the melee enemy by finding and storing a reference to the player.
+    /// </summary>
     void Start()
     {
         GameObject playerObj = GameObject.Find("Player");
@@ -21,7 +24,10 @@ public class MeleeEnemyController : MonoBehaviour
             _player = playerObj.transform;
         }
     }
-    
+
+    /// <summary>
+    /// Updates the melee enemy each frame, managing attack timer and deciding whether to chase or attack the player.
+    /// </summary>
     void Update()
     {
         if (_player != null)
@@ -45,14 +51,20 @@ public class MeleeEnemyController : MonoBehaviour
             transform.LookAt(new Vector3(_player.position.x, transform.position.y, _player.position.z));
         }
     }
-    
+
+    /// <summary>
+    /// Moves the melee enemy towards the player's position.
+    /// </summary>
     void ChasePlayer()
     {
         Vector3 direction = (_player.position - transform.position).normalized;
         direction.y = 0;
         transform.position += direction * _speed * Time.deltaTime;
     }
-    
+
+    /// <summary>
+    /// Executes a melee attack on the player, dealing damage and resetting the attack timer.
+    /// </summary>
     void Attack()
     {
         _isAttacking = true;
@@ -68,7 +80,11 @@ public class MeleeEnemyController : MonoBehaviour
         
         _isAttacking = false;
     }
-    
+
+    /// <summary>
+    /// Reduces the melee enemy's health by the specified damage amount and destroys it if health reaches zero.
+    /// </summary>
+    /// <param name="damage">The amount of damage to apply.</param>
     public void TakeDamage(int damage)
     {
         _health -= damage;
@@ -79,6 +95,10 @@ public class MeleeEnemyController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles collision stay events to trigger attacks on the player when in contact.
+    /// </summary>
+    /// <param name="collision">The collision information.</param>
     void OnCollisionStay(Collision collision)
 {
     if (collision.gameObject.name == "Player" && _attackTimer <= 0 && !_isAttacking)
