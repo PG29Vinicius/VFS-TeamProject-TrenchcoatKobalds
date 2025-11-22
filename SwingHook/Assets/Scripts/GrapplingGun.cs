@@ -108,9 +108,9 @@ public class GrapplingGun : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Creates the Spring Joint component to deal with the physics based movement.
     /// </summary>
-    /// <param name="targetPoint"></param>
+    /// <param name="targetPoint">The object that was grappled.</param>
     private void CreateGrappleJoint(Vector3 targetPoint)
     {
         grapplePoint = targetPoint;
@@ -123,6 +123,11 @@ public class GrapplingGun : MonoBehaviour
         ConfigureJointPhysics(activeJoint, distance);
     }
 
+    /// <summary>
+    /// Sets the Spring Joint physics variables.
+    /// </summary>
+    /// <param name="joint">A reference to the Spring Joint component.</param>
+    /// <param name="distance">The minimum and maximum distance between the Player and the grappled object.</param>
     private void ConfigureJointPhysics(SpringJoint joint, float distance)
     {
         joint.maxDistance = distance * maxDistanceMultiplier;
@@ -132,6 +137,9 @@ public class GrapplingGun : MonoBehaviour
         joint.massScale = playerMass;
     }
 
+    /// <summary>
+    /// Destroys the Spring Joint component when the player stops the grapple.
+    /// </summary>
     private void StopGrapple()
     {
         if (activeJoint != null)
@@ -144,12 +152,18 @@ public class GrapplingGun : MonoBehaviour
         isGrappling = false;
     }
 
+    /// <summary>
+    /// Starts drawing the rope of the grappling hook using a Line Renderer component.
+    /// </summary>
     private void InitializeRopeVisual()
     {
         lineRenderer.positionCount = 2;
         currentRopePosition = gunTip.position;
     }
 
+    /// <summary>
+    /// Sets the origin and the destination of the rope with the Line Renderer component.
+    /// </summary>
     private void UpdateRopeVisual()
     {
         if (isGrappling == false || activeJoint == null)
@@ -163,6 +177,9 @@ public class GrapplingGun : MonoBehaviour
         lineRenderer.SetPosition(1, currentRopePosition);
     }
 
+    /// <summary>
+    /// Checks if the components are null and tries to get them again, to avoid null references.
+    /// </summary>
     private void ValidateComponents()
     {
         if (lineRenderer == null)
@@ -191,6 +208,7 @@ public class GrapplingGun : MonoBehaviour
         }
     }
 
+    // A debug function to check collisions with Gizmos in the Unity Editor.
     private void OnDrawGizmos()
     {
         if (isGrappling == false)
