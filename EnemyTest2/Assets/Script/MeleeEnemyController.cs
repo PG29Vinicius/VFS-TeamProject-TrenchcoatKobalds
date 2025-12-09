@@ -3,7 +3,6 @@ using UnityEngine;
 public class MeleeEnemyController : MonoBehaviour
 {
     [Header("Melee Enemy Stats")]
-    [SerializeField][Tooltip("The maximum health points of the melee enemy")] private int _health = 5;
     [SerializeField][Tooltip("The movement speed of the melee enemy in units per second")] private float _speed = 5f;
     [SerializeField][Tooltip("The amount of damage dealt to the player per attack")] private int _damage = 20;
     [SerializeField][Tooltip("The distance at which the melee enemy can attack the player")] private float _attackDistance = 0.5f;
@@ -80,28 +79,23 @@ public class MeleeEnemyController : MonoBehaviour
     }
 
     /// <summary>
-    /// Reduces the melee enemy's health by the specified damage amount and destroys it if health reaches zero.
+    /// Destroys the melee enemy instantly when hit.
     /// </summary>
-    /// <param name="damage">The amount of damage to apply.</param>
-    public void TakeDamage(int damage)
+/*    public void Die()
     {
-        _health -= damage;
-        
-        if (_health <= 0)
-        {
-            Destroy(gameObject);
-        }
-    }
+        Debug.Log("Melee Enemy died!");
+        Destroy(gameObject);
+    }*/
 
     /// <summary>
     /// Handles collision stay events to trigger attacks on the player when in contact.
     /// </summary>
     /// <param name="collision">The collision information.</param>
     void OnCollisionStay(Collision collision)
-{
-    if (collision.gameObject.name == "Player" && _attackTimer <= 0 && !_isAttacking)
     {
-        Attack();
+        if (collision.gameObject.name == "Player" && _attackTimer <= 0 && !_isAttacking)
+        {
+            Attack();
+        }
     }
-}
 }

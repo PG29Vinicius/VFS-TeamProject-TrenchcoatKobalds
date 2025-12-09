@@ -7,7 +7,6 @@ public class AttackController : MonoBehaviour
 
     [Header("Attack Settings")]
     [SerializeField][Tooltip("How long the kick hitbox stays active in seconds")] private float _kickDuration = 0.2f;
-    [SerializeField][Tooltip("The amount of damage dealt by a kick attack")] private int _kickDamage = 1;
 
     [Header("Knockback Forces")]
     [SerializeField][Tooltip("The horizontal force applied to enemies when kicked")] private float _kickForce = 600f;
@@ -17,7 +16,7 @@ public class AttackController : MonoBehaviour
     private bool _canAttack = true;
     private Rigidbody _playerRb;
 
- 
+
     /// Initializes the AttackController by setting up references to the player's Rigidbody and the kick hitbox.
     void Start()
     {
@@ -41,7 +40,7 @@ public class AttackController : MonoBehaviour
         if (!_canAttack)
         {
             return;
-    }
+        }
 
         // F = Kick
         if (Input.GetKeyDown(KeyCode.F))
@@ -79,47 +78,50 @@ public class AttackController : MonoBehaviour
     }
 
     /// <summary>
-    /// Applies knockback to the specified enemy and deals damage.
+    /// Applies knockback to the specified enemy and kills them instantly.
     /// </summary>
-    /// <param name="enemy"></param>
-    /// <param name="hitPosition"></param>
+    /// <param name="enemy">The enemy GameObject to hit.</param>
+    /// <param name="hitPosition">The position where the hit occurred.</param>
     public void ApplyKnockback(GameObject enemy, Vector3 hitPosition)
     {
         Rigidbody enemyRb = enemy.GetComponent<Rigidbody>();
 
-        if (enemyRb == null)
+        // Apply knockback first (before destroying)
+        if (enemyRb != null)
         {
+            // Calculate player speed
+            float playerSpeed = _playerRb.linearVelocity.magnitude;
+            float speedBonus = 1f + (playerSpeed * _speedMultiplier);
+
+            // Calculate knockback with speed bonus
+            float finalForce = _kickForce * speedBonus;
+            Vector3 direction = (enemy.transform.position - hitPosition).normalized;
+
+            // Apply force
+            enemyRb.AddForce(direction * finalForce);
+            enemyRb.AddForce(Vector3.up * _upForce * speedBonus);
+        }
+
+        // Kill the enemy - check which type and call Die()
+/*        MeleeEnemyController meleeEnemy = enemy.GetComponent<MeleeEnemyController>();
+        if (meleeEnemy != null)
+        {
+            meleeEnemy.Die();
             return;
         }
 
-        // Apply damage to enemy
-        MeleeEnemyController meleeEnemy = enemy.GetComponent<MeleeEnemyController>();
-        TankEnemyController tankEnemy = enemy.GetComponent<TankEnemyController>();
         RangeEnemyController rangeEnemy = enemy.GetComponent<RangeEnemyController>();
-
-        if (meleeEnemy != null)
-        { 
-            meleeEnemy.TakeDamage(_kickDamage);
-        }
-        else if (tankEnemy != null)
+        if (rangeEnemy != null)
         {
-            tankEnemy.TakeDamage(_kickDamage);
+            rangeEnemy.Die();
+            return;
         }
-        else if (rangeEnemy != null)
+
+        TankEnemyController tankEnemy = enemy.GetComponent<TankEnemyController>();
+        if (tankEnemy != null)
         {
-            rangeEnemy.TakeDamage(_kickDamage);
-        }
-
-        // Calculate player speed
-        float playerSpeed = _playerRb.linearVelocity.magnitude;
-        float speedBonus = 1f + (playerSpeed * _speedMultiplier);
-
-        // Calculate knockback with speed bonus
-        float finalForce = _kickForce * speedBonus;
-        Vector3 direction = (enemy.transform.position - hitPosition).normalized;
-
-        // Apply force
-        enemyRb.AddForce(direction * finalForce);
-        enemyRb.AddForce(Vector3.up * _upForce * speedBonus);
+            tankEnemy.Die();
+            return;
+        }*/
     }
 }
