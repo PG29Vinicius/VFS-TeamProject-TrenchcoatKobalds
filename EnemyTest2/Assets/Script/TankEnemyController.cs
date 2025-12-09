@@ -37,10 +37,10 @@ public class TankEnemyController : MonoBehaviour
                 _attackTimer -= Time.deltaTime;
             }
 
-            if (distance <= _attackDistance && _attackTimer <= 0 && !_isAttacking)
+            /*if (distance <= _attackDistance && _attackTimer <= 0 && !_isAttacking)
             {
                 Attack();
-            }
+            }*/
             else if (distance > _attackDistance)
             {
                 ChasePlayer();
@@ -63,7 +63,7 @@ public class TankEnemyController : MonoBehaviour
     /// <summary>
     /// Attacks the player, dealing damage and resetting the attack timer.
     /// </summary>
-    void Attack()
+    /*void Attack()
     {
         _isAttacking = true;
         _attackTimer = _attackCooldown;
@@ -77,7 +77,7 @@ public class TankEnemyController : MonoBehaviour
         }
 
         _isAttacking = false;
-    }
+    }*/
 
     /// <summary>
     /// Destroys the tank enemy instantly when hit.
@@ -94,9 +94,9 @@ public class TankEnemyController : MonoBehaviour
     /// <param name="collision"></param>
     void OnCollisionStay(Collision collision)
     {
-        if (collision.gameObject.name == "Player" && _attackTimer <= 0 && !_isAttacking)
+      /*  if (collision.gameObject.name == "Player" && _attackTimer <= 0 && !_isAttacking)
         {
             Attack();
-        }
+        }*/
     }
 }
