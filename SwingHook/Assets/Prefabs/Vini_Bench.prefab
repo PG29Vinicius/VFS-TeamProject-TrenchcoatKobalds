@@ -334,7 +334,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4068214678041122876}
   m_Layer: 8
-  m_Name: Bench
+  m_Name: Vini_Bench
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
