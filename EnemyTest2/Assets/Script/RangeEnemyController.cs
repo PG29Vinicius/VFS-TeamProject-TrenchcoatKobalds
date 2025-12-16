@@ -1,10 +1,10 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class RangeEnemyController : MonoBehaviour
 {
     [Header("Range Enemy Stats")]
     [SerializeField][Tooltip("The amount of damage dealt to the player per attack")] private int _damage = 20;
-    [SerializeField][Tooltip("Time in seconds between consecutive attacks")] private float _attackCooldown = 2f;
+    [SerializeField][Tooltip("Time in seconds between consecutive attacks")] private float _attackCooldown = 1f; // CHANGED: 2f → 1f (shoots faster)
     [SerializeField][Tooltip("Speed of the projectile")] private float _projectileSpeed = 30f;
 
     [Header("Detection Ranges")]
@@ -68,7 +68,7 @@ public class RangeEnemyController : MonoBehaviour
 
         BoxCollider attackCollider = attackZone.AddComponent<BoxCollider>();
         attackCollider.isTrigger = true;
-        // Size: width (x), height (y), length (z)
+        // Size: width x, height y, length z
         attackCollider.size = new Vector3(_attackWidth, _attackHeight, _attackLength);
 
         AttackRangeDetector attackDetector = attackZone.AddComponent<AttackRangeDetector>();
@@ -131,8 +131,8 @@ public class RangeEnemyController : MonoBehaviour
                 rangeProjectile.SetDamage(_damage);
             }
 
-            // Destroy projectile after 5 seconds if it doesn't hit anything
-            Destroy(projectile, 5f);
+            // Destroy projectile after 10 seconds if it doesn't hit anything
+            Destroy(projectile, 10f); 
         }
         else
         {
