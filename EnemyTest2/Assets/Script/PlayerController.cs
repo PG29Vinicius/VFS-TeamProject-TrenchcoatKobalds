@@ -9,6 +9,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField][Tooltip("The speed of player and based on spreadsheet")] private int _speed = 10;
     [SerializeField][Tooltip("How fast player control the camera")] private float _mouseSensitivity = 400f;
 
+    [Header("Run")]
+    [SerializeField][Tooltip("The speed multiplier when running")] private float _runMultiplier = 1.5f;
+
     [Header("Slide")]
     [SerializeField][Tooltip("The parameter of player slide speed")] private float _slideSpeed = 15f;
     [SerializeField][Tooltip("The distance of player can slide")] private float _slideDuration = 0.5f;
@@ -29,6 +32,7 @@ public class PlayerController : MonoBehaviour
     private bool _isSliding = false;
     private float _slideTimer = 0f;
     private Vector3 _slideDirection;
+    private bool _isRunning = false;
 
     private Health _health;
 
@@ -78,8 +82,11 @@ public class PlayerController : MonoBehaviour
         float xMovement = Input.GetAxis("Horizontal");
         _moveVector = transform.right * xMovement + transform.forward * zMovement;
 
-        // Slide input - Left Shift
-        if (Input.GetKeyDown(KeyCode.LeftShift) && !_isSliding)
+        // Run input - Left Shift (hold)
+        _isRunning = Input.GetKey(KeyCode.LeftShift);
+
+        // Slide input - Left Ctrl
+        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isSliding)
         {
             StartSlide();
         }
@@ -118,7 +125,9 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            _rb.AddForce(_moveVector * _speed);
+            // Apply run multiplier if running
+            float currentSpeed = _isRunning ? _speed * _runMultiplier : _speed;
+            _rb.AddForce(_moveVector * currentSpeed);
         }
     }
 
