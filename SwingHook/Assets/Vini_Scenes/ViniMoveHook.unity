@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 51502992}
   - component: {fileID: 51502994}
   - component: {fileID: 51502993}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Guntip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -172,7 +172,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   maxHookshotDistance: 100
-  useObjectCenter: 0
+  useObjectCenter: 1
   hookshotKey: 324
   pullSpeed: 50
   acceleration: 50
@@ -414,7 +414,7 @@ GameObject:
   - component: {fileID: 342026296}
   - component: {fileID: 342026295}
   - component: {fileID: 342026294}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1093,7 +1093,7 @@ GameObject:
   - component: {fileID: 479428774}
   - component: {fileID: 479428773}
   - component: {fileID: 479428775}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3493,7 +3493,7 @@ GameObject:
   - component: {fileID: 1099892708}
   - component: {fileID: 1099892707}
   - component: {fileID: 1099892706}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3852,7 +3852,7 @@ GameObject:
   - component: {fileID: 1164730194}
   - component: {fileID: 1164730193}
   - component: {fileID: 1164730192}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Barrel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4868,7 +4868,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1269591991}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SwingGun (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4960,7 +4960,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1289924003}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SwingGun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5274,7 +5274,7 @@ GameObject:
   - component: {fileID: 1664687988}
   - component: {fileID: 1664687990}
   - component: {fileID: 1664687989}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Guntip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5443,7 +5443,7 @@ GameObject:
   - component: {fileID: 1697899651}
   - component: {fileID: 1697899650}
   - component: {fileID: 1697899652}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Barrel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6679,7 +6679,7 @@ GameObject:
   - component: {fileID: 1968591038}
   - component: {fileID: 1968591037}
   - component: {fileID: 1968591036}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
